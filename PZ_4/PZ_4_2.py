@@ -29,5 +29,5 @@ while t <= a:
         i += 1
     p = c
     t += c
-print(i)
+print('Количество квадратов:', i)
 
