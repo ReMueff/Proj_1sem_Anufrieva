@@ -12,7 +12,6 @@ while type(a) != int:   # обработка исключений
 
 def vichty(num):   # объявление функции
     count = 0
-    p = 0
     while num > 0:
         p = num % 10
         count += p
