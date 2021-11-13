@@ -9,7 +9,7 @@ while type(a) != int:   # обработка исключений
     except ValueError:
         print('Введите число заново!')
         a = input('Введите первое число:')
-while type(b) != int:
+while type(b) != int:   # обработка исключений
     try:
         b = int(b)
     except ValueError:
