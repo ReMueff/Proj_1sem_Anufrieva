@@ -4,9 +4,6 @@
 
 
 def PowerA234(num):   # функция возведения числа во 2, 3, 4 степени
-    step2 = 0
-    step3 = 0
-    step4 = 0
     step2 = num ** 2
     step3 = num ** 3
     step4 = num ** 4
