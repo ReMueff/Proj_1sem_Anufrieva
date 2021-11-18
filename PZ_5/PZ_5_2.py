@@ -3,7 +3,7 @@
 # помощью этой функции найти вторую, третью и четвертую степень пяти данных чисел.
 
 
-def PowerA234(num):   #
+def PowerA234(num):   # функция возведения числа во 2, 3, 4 степени
     step2 = 0
     step3 = 0
     step4 = 0
@@ -13,7 +13,7 @@ def PowerA234(num):   #
     print(f"\n\033[3m\033[33m Число = {num} : вторая степень = {step2}, третья степень = {step3}, четвёртая степень = {step4}")
 
 
-a = 'fill'   #
+a = 'fill'   # добавление значений чисел в список
 List = []
 while a != '':
     a = input(f"\033[36mВведите число:\033[0m ")
@@ -22,7 +22,7 @@ while a != '':
         List.pop()
     print(List)
 
-counter = 0   #
+counter = 0   # обход списка List с вызовом функции на каждое значение
 while counter != len(List):
     PowerA234(int(List[counter]))
     counter += 1
