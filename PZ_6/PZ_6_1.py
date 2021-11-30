@@ -2,7 +2,7 @@
 # положительных нечетных чисел: 1,3,5, ... .
 
 
-def count():
+def count(): # Функция, возвращающая последовательный ряд нечётных чисел
     my_list = []
     a = 1
     for i in range(10):
@@ -11,4 +11,4 @@ def count():
     return my_list
 
 
-print(count())
+print(count()) # Вывод результата.
