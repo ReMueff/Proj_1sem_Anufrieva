@@ -7,10 +7,10 @@
 
 magnit = {'молоко', 'соль', 'сахар'}
 pyaterochka = {'мясо', 'молоко', 'сыр'}
-print(f"В Пятёрочке отсутствуют: {magnit.difference(pyaterochka)}")
+print(f"В Пятёрочке отсутствуют: {magnit.difference(pyaterochka)}")   # сравнение ассортиментов магазинов
 print(f"В Магните отсутствуют: {pyaterochka.difference(magnit)}")
 print(f"Все продукты: {magnit.union(pyaterochka)}")
-if pyaterochka != magnit:
+if pyaterochka != magnit:   # проверка, равны ли перечни товаров в магазинах
     print("Ассортименты не равны!")
 elif magnit == pyaterochka:
     print("Ассортименты равны!")
