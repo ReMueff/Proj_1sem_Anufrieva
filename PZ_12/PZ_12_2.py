@@ -54,7 +54,7 @@ def square_count():
 
 root = Tk()
 root.title('Счётчик квадратов')
-root.geometry('450x500')
+root.geometry('450x200')
 
 main = Label(text='Счётчик квадратов', font=('Arial', 20)).grid(columnspan=2, row=0)
 
