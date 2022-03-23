@@ -1,6 +1,6 @@
 _a = 15
 
-def square_perimetr(a=_a):
+def square_perimeter(a=_a):
     return a * 4
 
 

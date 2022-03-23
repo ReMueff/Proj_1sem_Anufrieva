@@ -1,7 +1,7 @@
 _default_radius = 5
 
 
-def circle_perimetr(r=_default_radius):
+def circle_perimeter(r=_default_radius):
     return 2 * 3.14 * r
 
 
