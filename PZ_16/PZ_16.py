@@ -6,11 +6,11 @@
 
 import tkinter as tk
 from tkinter import ttk
+from tkinter.ttk import *
 import sqlite3 as sq
 
 
 class Main(tk.Frame):
-
     """Класс для главного окна"""
 
     def __init__(self, root):
@@ -25,57 +25,58 @@ class Main(tk.Frame):
 
         # self.add_img = tk.PhotoImage(file="BD/11.gif")
         self.btn_open_dialog = tk.Button(toolbar, text='Добавить запись', command=self.open_dialog, bg='#5da130', bd=0,
-                                    compound=tk.TOP) #, image=self.add_img)
+                                         compound=tk.TOP)  # , image=self.add_img)
         self.btn_open_dialog.pack(side=tk.LEFT)
 
         # self.update_img = tk.PhotoImage(file="BD/12.gif")
         btn_edit_dialog = tk.Button(toolbar, text="Редактировать", command=self.open_update_dialog, bg='#5da130',
-                                    bd=0, compound=tk.TOP) #, image=self.update_img)
+                                    bd=0, compound=tk.TOP)  # , image=self.update_img)
         btn_edit_dialog.pack(side=tk.LEFT)
 
         # self.delete_img = tk.PhotoImage(file="BD/13.gif")
         btn_delete = tk.Button(toolbar, text="Удалить запись", command=self.delete_records, bg='#5da130',
-                                    bd=0, compound=tk.TOP) #, image=self.delete_img)
+                               bd=0, compound=tk.TOP)  # , image=self.delete_img)
         btn_delete.pack(side=tk.LEFT)
 
         # self.search_img = tk.PhotoImage(file="BD/14.gif")
         btn_search = tk.Button(toolbar, text="Поиск записи", command=self.open_search_dialog, bg='#5da130',
-                               bd=0, compound=tk.TOP) #, image=self.search_img)
+                               bd=0, compound=tk.TOP)  # , image=self.search_img)
         btn_search.pack(side=tk.LEFT)
 
         # self.refresh_img = tk.PhotoImage(file="BD/15.gif")
         btn_refresh = tk.Button(toolbar, text="Обновить экран", command=self.view_records, bg='#5da130',
-                               bd=0, compound=tk.TOP) #, image=self.refresh_img)
+                                bd=0, compound=tk.TOP)  # , image=self.refresh_img)
         btn_refresh.pack(side=tk.LEFT)
 
-        self.tree = ttk.Treeview(self, columns=('goods_id', 'goods_name', 'shop_name', 'shop_bid', 'amount', 'value', 'opt_price'), height=15, show='headings')
+        self.tree = ttk.Treeview(self, columns=(
+        'goods_id', 'goods_name', 'shop_name', 'shop_bid', 'amount', 'value', 'opt_price'), height=15, show='headings')
 
-        self.tree.column('goods_id', width=50, anchor=tk.CENTER)
-        self.tree.column('goods_name', width=180, anchor=tk.CENTER)
-        self.tree.column('shop_name', width=140, anchor=tk.CENTER)
-        self.tree.column('shop_bid', width=70, anchor=tk.CENTER)
-        self.tree.column('amount', width=50, anchor=tk.CENTER)
-        self.tree.column('value', width=50, anchor=tk.CENTER)
-        self.tree.column('opt_price', width=140, anchor=tk.CENTER)
+        self.tree.column('goods_id', width=30, anchor=tk.CENTER)
+        self.tree.column('goods_name', width=130, anchor=tk.CENTER)
+        self.tree.column('shop_name', width=200, anchor=tk.CENTER)
+        self.tree.column('shop_bid', width=100, anchor=tk.CENTER)
+        self.tree.column('amount', width=170, anchor=tk.CENTER)
+        self.tree.column('value', width=120, anchor=tk.CENTER)
+        self.tree.column('opt_price', width=100, anchor=tk.CENTER)
 
-        self.tree.heading('goods_id', text='Код товара')
+        self.tree.heading('goods_id', text='Код')
         self.tree.heading('goods_name', text='Наименование товара')
         self.tree.heading('shop_name', text='Наименование магазина')
         self.tree.heading('shop_bid', text='Заявки магазина')
         self.tree.heading('amount', text='Количество товара на складе')
         self.tree.heading('value', text='Единицы измерения')
-        self.tree.heading('opt_price', text=' Оптовая цена')
+        self.tree.heading('opt_price', text='Оптовая цена')
 
-        self.tree.pack()
+        self.tree.pack(side=tk.BOTTOM)
 
     def records(self, goods_id, goods_name, shop_name, shop_bid, amount, value, opt_price):
         self.db.insert_data(goods_id, goods_name, shop_name, shop_bid, amount, value, opt_price)
         self.view_records()
 
     def update_record(self, goods_id, goods_name, shop_name, shop_bid, amount, value, opt_price):
-        self.db.cur.execute("""UPDATE goods SET goods_id=?, goods_name=?, shop_name=?, shop_bid=?, amount=? value=? 
-        opt_price=? WHERE goods_name=?""",(goods_id, goods_name, shop_name, shop_bid, amount, value, opt_price,
-                                           self.tree.set(self.tree.selection()[0], '#2')))
+        self.db.cur.execute("""UPDATE goods SET goods_id=?, goods_name=?, shop_name=?, shop_bid=?, amount=?, value=?, 
+        opt_price=? WHERE goods_name=?""", (goods_id, goods_name.lower(), shop_name, shop_bid, amount, value, opt_price,
+                                            self.tree.set(self.tree.selection()[0], '#2')))
         self.db.con.commit()
         self.view_records()
 
@@ -90,18 +91,13 @@ class Main(tk.Frame):
         self.db.con.commit()
         self.view_records()
 
-    # def search_records(self, user_id):
-    #     user_id = ("%" + user_id + "%",)
-    #     self.db.cur.execute("""SELECT * FROM users WHERE name LIKE ?""", user_id)
-    #     [self.tree.delete(i) for i in self.tree.get_children()]
-    #     [self.tree.insert('', 'end', values=row) for row in self.db.cur.fetchall()]
 
-    def search_records(self, score):
-        score = (score,)
-        self.db.cur.execute("""SELECT * FROM goods WHERE goods_name=?""", score)
+
+    def search_records(self, good_name):
+        score = (good_name,)
+        self.db.cur.execute(f"""SELECT * FROM goods WHERE goods_name LIKE '%{good_name.lower()}%'""")
         [self.tree.delete(i) for i in self.tree.get_children()]
         [self.tree.insert('', 'end', values=row) for row in self.db.cur.fetchall()]
-
 
     def open_dialog(self):
         Child(root, app)
@@ -112,8 +108,8 @@ class Main(tk.Frame):
     def open_search_dialog(self):
         Search()
 
-class Child(tk.Toplevel):
 
+class Child(tk.Toplevel):
     """Класс для дочернего окна"""
 
     def __init__(self, root, app):
@@ -123,62 +119,70 @@ class Child(tk.Toplevel):
 
     def init_child(self):
         self.title('Добавить запись')
-        self.geometry('400x220+400+300')
+        self.geometry('400x270+400+300')
         self.resizable(False, False)
 
-        label_description = tk.Label(self, text='Код товара')
-        label_description.place(x=50, y=25)
-        self.entry_description = ttk.Entry(self)
-        self.entry_description.place(x=110, y=25)
+        label_id = tk.Label(self, text='Код товара')
+        label_id.place(x=50, y=25)
+        self.entry_id = ttk.Entry(self)
+        self.entry_id.place(x=250, y=25)
 
-        label_name = tk.Label(self, text='Наименование товара')
-        label_name.place(x=50, y=50)
-        self.entry_name = ttk.Entry(self)
-        self.entry_name.place(x=110, y=50)
+        label_name_good = tk.Label(self, text='Наименование товара')
+        label_name_good.place(x=50, y=50)
+        self.entry_name_good = ttk.Entry(self)
+        self.entry_name_good.place(x=250, y=50)
 
-        label_sex = tk.Label(self, text=' Наименование магазина')
-        label_sex.place(x=50, y=75)
-        self.entry_name = ttk.Entry(self)
-        self.entry_name.place(x=110, y=50)
-        # self.combobox = ttk.Combobox(self, values=[u'Мужской', u'Женский'])
-        # self.combobox.current(0)
-        # self.combobox.place(x=110, y=75)
+        label_name_shop = tk.Label(self, text='Наименование магазина')
+        label_name_shop.place(x=50, y=75)
+        self.entry_name_shop = ttk.Entry(self)
+        self.entry_name_shop.place(x=250, y=75)
 
-        label_old = tk.Label(self, text='Заявки магазина')
-        label_old.place(x=50, y=100)
-        self.entry_old = ttk.Entry(self)
-        self.entry_old.place(x=110, y=100)
+        label_bid = tk.Label(self, text='Заявки магазина')
+        label_bid.place(x=50, y=100)
+        self.entry_bid = ttk.Scale(self, from_=0, to=100, command=self.onScale)
 
-        label_score = tk.Label(self, text='Количество товара на складе')
-        label_score.place(x=50, y=125)
-        self.entry_score = ttk.Entry(self)
-        self.entry_score.place(x=110, y=125)
+        self.entry_bid.place(x=250, y=100)
+        self.var = tk.IntVar()
 
-        label_score = tk.Label(self, text='Единицы измерения')
-        label_score.place(x=50, y=150)
-        self.entry_score = ttk.Entry(self)
-        self.entry_score.place(x=110, y=125)
+        self.label_bid = Label(self, text=0, textvariable=self.var)
+        self.label_bid.place(x=360, y=100)
 
-        label_score = tk.Label(self, text='Оптовая цена')
-        label_score.place(x=50, y=175)
-        self.entry_score = ttk.Entry(self)
-        self.entry_score.place(x=110, y=125)
+        label_amount = tk.Label(self, text='Количество товара на складе')
+        label_amount.place(x=50, y=125)
+        self.entry_amount = ttk.Entry(self)
+        self.entry_amount.place(x=250, y=125)
 
+        label_value = tk.Label(self, text='Единицы измерения')
+        label_value.place(x=50, y=150)
+        self.entry_value = ttk.Combobox(self, values=[u'килограмм', u'штука', u'литр', u'грамм', u'миллиграмм',
+                                                      u'миллилитр', u'баррель', u'тонна', u'центнер', u'метр',
+                                                      u'упаковка', u'коробка'])
+        self.entry_value.place(x=250, y=150)
 
+        label_opt_price = tk.Label(self, text='Оптовая цена')
+        label_opt_price.place(x=50, y=175)
+        self.entry_opt_price = ttk.Entry(self)
+        self.entry_opt_price.place(x=250, y=175)
 
         btn_cancel = ttk.Button(self, text='Закрыть', command=self.destroy)
-        btn_cancel.place(x=300, y=170)
+        btn_cancel.place(x=300, y=220)
 
         self.btn_ok = ttk.Button(self, text='Добавить')
-        self.btn_ok.place(x=220, y=170)
-        self.btn_ok.bind('<Button-1>', lambda event: self.view.records(self.entry_description.get(),
-                                                                       self.entry_name.get(),
-                                                                       self.combobox.get(),
-                                                                       self.entry_old.get(),
-                                                                       self.entry_score.get()))
-
+        self.btn_ok.place(x=220, y=220)
+        self.btn_ok.bind('<Button-1>', lambda event: self.view.records(self.entry_id.get(),
+                                                                       self.entry_name_good.get(),
+                                                                       self.entry_name_shop.get(),
+                                                                       self.label_bid['text'],
+                                                                       self.entry_amount.get(),
+                                                                       self.entry_value.get(),
+                                                                       self.entry_opt_price.get()))
         self.grab_set()
         self.focus_set()
+
+    def onScale(self, val):
+        v = int(float(val))
+        self.var.set(v)
+
 
 class Update(Child):
     def __init__(self):
@@ -189,13 +193,16 @@ class Update(Child):
     def init_edit(self):
         self.title("Редактировать запись")
         btn_edit = ttk.Button(self, text="Редактировать")
-        btn_edit.place(x=205, y=170)
-        btn_edit.bind('<Button-1>', lambda event: self.view.update_record(self.entry_description.get(),
-                                                                          self.entry_name.get(),
-                                                                          self.combobox.get(),
-                                                                          self.entry_old.get(),
-                                                                          self.entry_score.get()))
+        btn_edit.place(x=205, y=220)
+        btn_edit.bind('<Button-1>', lambda event: self.view.update_record(self.entry_id.get(),
+                                                                          self.entry_name_good.get(),
+                                                                          self.entry_name_shop.get(),
+                                                                          self.label_bid['text'],
+                                                                          self.entry_amount.get(),
+                                                                          self.entry_value.get(),
+                                                                          self.entry_opt_price.get()))
         self.btn_ok.destroy()
+
 
 class Search(tk.Toplevel):
     def __init__(self):
@@ -222,23 +229,27 @@ class Search(tk.Toplevel):
         btn_search.bind('<Button-1>', lambda event: self.view.search_records(self.entry_search.get()))
         btn_search.bind('<Button-1>', lambda event: self.destroy(), add='+')
 
+
 class DB:
     def __init__(self):
-
         with sq.connect('optBase.db') as self.con:
             self.cur = self.con.cursor()
-            self.cur.execute("""CREATE TABLE IF NOT EXISTS users (
-                user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                sex INTEGER NOT NULL DEFAULT 1,
-                old INTEGER,
-                score INTEGER
+            self.cur.execute("""CREATE TABLE IF NOT EXISTS goods (
+                goods_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                goods_name TEXT NOT NULL,
+                shop_name TEXT NOT NULL,
+                shop_bid INTEGER,
+                amount INTEGER,
+                value TEXT NOT NULL,
+                opt_price INTEGER
                 )""")
 
-    def insert_data(self, user_id, name, sex, old, score):
-        self.cur.execute("""INSERT INTO users(user_id, name, sex, old, score) VALUES (?, ?, ?, ?, ?)""",
-                             (user_id, name, sex, old, score))
+    def insert_data(self, goods_id, goods_name, shop_name, shop_bid, amount, value, opt_price):
+        self.cur.execute(
+            """INSERT INTO goods (goods_id, goods_name, shop_name, shop_bid, amount, value, opt_price) VALUES (?, ?, ?, ?, ?, ?, ?)""",
+            (goods_id, goods_name.lower(), shop_name, shop_bid, amount, value, opt_price))
         self.con.commit()
+
 
 if __name__ == "__main__":
     root = tk.Tk()
@@ -246,6 +257,6 @@ if __name__ == "__main__":
     app = Main(root)
     app.pack()
     root.title("Работа с базой данных Сапер")
-    root.geometry("650x450+300+200")
+    root.geometry("1000x450+300+200")
     root.resizable(False, False)
     root.mainloop()
